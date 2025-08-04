@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3  src/transports/pulsar_producer.py
 """
 Generic Container Producer - Real Pulsar Python Client
 ====================================================
@@ -15,6 +15,7 @@ from security import SetUpEncryption
 
 import pulsar
 
+from src.transports.pulsar.config import ContainerProducerConfig
 
 
 class ContainerProducer:

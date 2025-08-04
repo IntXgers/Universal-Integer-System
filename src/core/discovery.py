@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 src/core/discovery.py
 """
 Streamlined Discovery System - Updated for Refactored Integer System
 ===================================================================
@@ -598,6 +598,514 @@ def validate_code_range (code: int,system: str) -> bool:
     return range_info ["start"] <= code <= range_info ["end"]
 
 
+# Add this to your discovery.py file after the existing convenience functions
+# and before the "TESTING AND VERIFICATION" section
+
+# =============================================================================
+# REQUEST HANDLING INTERFACE
+# =============================================================================
+
+def handle_request(request) -> Dict[str, Any]:
+    """
+    Main request handler for the Universal Integer Discovery System.
+
+    This function provides a unified interface for all discovery operations.
+    It can handle various types of requests and returns structured responses.
+
+    Args:
+        request: Can be:
+            - int: Direct code translation
+            - str: Name search, system query, or command
+            - dict: Structured request with specific operations
+
+    Returns:
+        Dict containing the response with status, data, and metadata
+    """
+    try:
+        # Handle integer code requests
+        if isinstance(request, int):
+            return _handle_code_request(request)
+
+        # Handle string requests (names, commands, searches)
+        elif isinstance(request, str):
+            return _handle_string_request(request)
+
+        # Handle structured dictionary requests
+        elif isinstance(request, dict):
+            return _handle_structured_request(request)
+
+        # Handle list requests (batch operations)
+        elif isinstance(request, list):
+            return _handle_batch_request(request)
+
+        else:
+            return {
+                "status": "error",
+                "error": f"Unsupported request type: {type(request).__name__}",
+                "supported_types": ["int", "str", "dict", "list"]
+            }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Request processing failed: {str(e)}",
+            "request_type": type(request).__name__
+        }
+
+
+def _handle_code_request(code: int) -> Dict[str, Any]:
+    """Handle direct integer code translation requests."""
+    try:
+        translation = translate_code(code)
+        system = get_system_for_code(code)
+        formatted = format_code_with_context(code)
+        code_info = streamlined_translator.get_code_info(code)
+
+        return {
+            "status": "success",
+            "request_type": "code_translation",
+            "code": code,
+            "translation": translation,
+            "system": system,
+            "formatted": formatted,
+            "detailed_info": code_info
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Code translation failed: {str(e)}",
+            "code": code
+        }
+
+
+def _handle_string_request(request: str) -> Dict[str, Any]:
+    """Handle string-based requests (searches, commands, names)."""
+    request_lower = request.lower().strip()
+
+    # Command handling
+    if request_lower.startswith("help") or request_lower == "?":
+        return _get_help_response()
+
+    elif request_lower.startswith("stats") or request_lower == "statistics":
+        return {
+            "status": "success",
+            "request_type": "statistics",
+            "data": get_translation_statistics()
+        }
+
+    elif request_lower.startswith("summary") or request_lower == "systems":
+        return {
+            "status": "success",
+            "request_type": "system_summary",
+            "data": get_system_summary()
+        }
+
+    elif request_lower.startswith("search "):
+        search_term = request[7:]  # Remove "search " prefix
+        results = find_codes_by_name(search_term)
+        return {
+            "status": "success",
+            "request_type": "name_search",
+            "search_term": search_term,
+            "results": results,
+            "count": len(results)
+        }
+
+    elif request_lower.startswith("suggest "):
+        concept = request[8:]  # Remove "suggest " prefix
+        suggestion = suggest_code_for_concept(concept)
+        return {
+            "status": "success",
+            "request_type": "code_suggestion",
+            "concept": concept,
+            "suggestion": suggestion
+        }
+
+    elif request_lower.startswith("validate "):
+        # Parse validation request: "validate 1234 test_name system_name"
+        parts = request[9:].split()
+        if len(parts) >= 3:
+            try:
+                code = int(parts[0])
+                name = parts[1]
+                system = parts[2]
+                validation = streamlined_translator.validate_code_addition(code, name, system)
+                return {
+                    "status": "success",
+                    "request_type": "validation",
+                    "validation_result": validation
+                }
+            except ValueError:
+                return {
+                    "status": "error",
+                    "error": "Invalid validation format. Use: validate <code> <name> <system>"
+                }
+        else:
+            return {
+                "status": "error",
+                "error": "Validation requires: code, name, and system"
+            }
+
+    # Check if it's a numeric string (code lookup)
+    elif request.isdigit():
+        code = int(request)
+        return _handle_code_request(code)
+
+    # Default: treat as name search
+    else:
+        results = find_codes_by_name(request)
+        return {
+            "status": "success",
+            "request_type": "name_search",
+            "search_term": request,
+            "results": results,
+            "count": len(results)
+        }
+
+
+def _handle_structured_request(request: Dict[str, Any]) -> Dict[str, Any]:
+    """Handle structured dictionary requests with specific operations."""
+    operation = request.get("operation", "unknown")
+
+    if operation == "translate":
+        code = request.get("code")
+        if code is not None:
+            return _handle_code_request(code)
+        else:
+            return {"status": "error", "error": "Missing 'code' parameter"}
+
+    elif operation == "search":
+        term = request.get("term") or request.get("search_term")
+        if term:
+            results = find_codes_by_name(term)
+            return {
+                "status": "success",
+                "request_type": "name_search",
+                "search_term": term,
+                "results": results,
+                "count": len(results)
+            }
+        else:
+            return {"status": "error", "error": "Missing 'term' parameter"}
+
+    elif operation == "suggest":
+        concept = request.get("concept")
+        size = request.get("size", 10)
+        if concept:
+            suggestion = suggest_code_for_concept(concept, size)
+            return {
+                "status": "success",
+                "request_type": "code_suggestion",
+                "concept": concept,
+                "size": size,
+                "suggestion": suggestion
+            }
+        else:
+            return {"status": "error", "error": "Missing 'concept' parameter"}
+
+    elif operation == "validate":
+        code = request.get("code")
+        name = request.get("name")
+        system = request.get("system")
+
+        if all([code is not None, name, system]):
+            validation = streamlined_translator.validate_code_addition(code, name, system)
+            return {
+                "status": "success",
+                "request_type": "validation",
+                "validation_result": validation
+            }
+        else:
+            return {
+                "status": "error",
+                "error": "Missing required parameters: code, name, system"
+            }
+
+    elif operation == "system_info":
+        system_name = request.get("system")
+        if system_name:
+            summary = get_system_summary()
+            if system_name in summary:
+                return {
+                    "status": "success",
+                    "request_type": "system_info",
+                    "system": system_name,
+                    "info": summary[system_name]
+                }
+            else:
+                return {
+                    "status": "error",
+                    "error": f"System '{system_name}' not found",
+                    "available_systems": list(summary.keys())
+                }
+        else:
+            return {"status": "error", "error": "Missing 'system' parameter"}
+
+    elif operation == "range_check":
+        code = request.get("code")
+        system = request.get("system")
+        if code is not None and system:
+            valid = validate_code_range(code, system)
+            return {
+                "status": "success",
+                "request_type": "range_check",
+                "code": code,
+                "system": system,
+                "valid": valid
+            }
+        else:
+            return {"status": "error", "error": "Missing 'code' or 'system' parameter"}
+
+    else:
+        return {
+            "status": "error",
+            "error": f"Unknown operation: {operation}",
+            "available_operations": [
+                "translate", "search", "suggest", "validate",
+                "system_info", "range_check"
+            ]
+        }
+
+
+def _handle_batch_request(request: List[Any]) -> Dict[str, Any]:
+    """Handle batch requests (list of operations)."""
+    results = []
+
+    for i, item in enumerate(request):
+        try:
+            result = handle_request(item)
+            result["batch_index"] = i
+            results.append(result)
+        except Exception as e:
+            results.append({
+                "status": "error",
+                "error": f"Batch item {i} failed: {str(e)}",
+                "batch_index": i
+            })
+
+    return {
+        "status": "success",
+        "request_type": "batch",
+        "total_requests": len(request),
+        "results": results,
+        "summary": {
+            "successful": len([r for r in results if r.get("status") == "success"]),
+            "failed": len([r for r in results if r.get("status") == "error"])
+        }
+    }
+
+
+def _get_help_response() -> Dict[str, Any]:
+    """Generate help response with available commands."""
+    return {
+        "status": "success",
+        "request_type": "help",
+        "help": {
+            "description": "Universal Integer Discovery System - Request Handler",
+            "supported_inputs": {
+                "integer": "Direct code translation (e.g., 1000)",
+                "string_commands": {
+                    "help or ?": "Show this help",
+                    "stats": "Show system statistics",
+                    "summary": "Show system summary",
+                    "search <term>": "Search codes by name",
+                    "suggest <concept>": "Suggest code allocation",
+                    "validate <code> <name> <system>": "Validate code addition"
+                },
+                "structured_requests": {
+                    "format": {"operation": "...", "parameters": "..."},
+                    "operations": [
+                        "translate", "search", "suggest", "validate",
+                        "system_info", "range_check"
+                    ]
+                },
+                "batch_requests": "List of any supported request types"
+            },
+            "examples": {
+                "code_lookup": 1000,
+                "name_search": "search auth",
+                "suggestion": "suggest new payment system",
+                "structured": {
+                    "operation": "translate",
+                    "code": 1000
+                },
+                "batch": [1000, "search user", {"operation": "stats"}]
+            }
+        }
+    }
+
+
+# =============================================================================
+# ENHANCED CONVENIENCE FUNCTIONS
+# =============================================================================
+
+def process_request(request) -> Dict[str, Any]:
+    """Alias for handle_request - for backward compatibility."""
+    return handle_request(request)
+
+
+def query_system(query) -> Dict[str, Any]:
+    """Alias for handle_request with query-focused naming."""
+    return handle_request(query)
+
+
+def discover_by_request(request) -> Dict[str, Any]:
+    """Alias for handle_request with discovery-focused naming."""
+    return handle_request(request)
+
+
+# =============================================================================
+# INTERACTIVE REQUEST PROCESSOR
+# =============================================================================
+
+def interactive_session():
+    """
+    Start an interactive session for testing the request handler.
+    Useful for development and debugging.
+    """
+    print("🚀 Universal Integer Discovery System - Interactive Session")
+    print("Type 'help' for commands, 'quit' to exit")
+    print("-" * 60)
+
+    while True:
+        try:
+            user_input = input("\n> ").strip()
+
+            if user_input.lower() in ['quit', 'exit', 'q']:
+                print("👋 Goodbye!")
+                break
+
+            if not user_input:
+                continue
+
+            # Process the request
+            response = handle_request(user_input)
+
+            # Pretty print the response
+            if response.get("status") == "success":
+                print("✅ Success:")
+                _pretty_print_response(response)
+            else:
+                print("❌ Error:")
+                print(f"   {response.get('error', 'Unknown error')}")
+
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+            break
+        except Exception as e:
+            print(f"❌ Session error: {e}")
+
+
+def _pretty_print_response(response: Dict[str, Any]):
+    """Pretty print response data for interactive session."""
+    request_type = response.get("request_type", "unknown")
+
+    if request_type == "code_translation":
+        print(f"   Code: {response['code']}")
+        print(f"   Translation: {response['translation']}")
+        print(f"   System: {response['system']}")
+        print(f"   Formatted: {response['formatted']}")
+
+    elif request_type == "name_search":
+        print(f"   Search: '{response['search_term']}'")
+        print(f"   Found: {response['count']} results")
+        for result in response['results'][:5]:  # Show first 5
+            print(f"     → {result['code']}: {result['name']} [{result['system']}]")
+        if response['count'] > 5:
+            print(f"     ... and {response['count'] - 5} more")
+
+    elif request_type == "code_suggestion":
+        suggestion = response['suggestion']
+        if 'error' not in suggestion:
+            print(f"   Concept: {response['concept']}")
+            print(f"   Suggested System: {suggestion['suggested_system']}")
+            print(f"   Start Code: {suggestion['suggested_start_code']}")
+            print(f"   Available Space: {suggestion['available_space']}")
+        else:
+            print(f"   Error: {suggestion['error']}")
+
+    elif request_type == "statistics":
+        stats = response['data']
+        print(f"   Total Codes: {stats['total_codes_registered']}")
+        print(f"   Discovery Time: {stats['discovery_time_ms']}")
+        print(f"   Cache Hit Rate: {stats['cache_hit_rate_percent']}")
+
+    else:
+        # Generic pretty print for other types
+        data = response.get('data', response)
+        if isinstance(data, dict) and len(data) < 10:
+            for key, value in data.items():
+                if key not in ['status', 'request_type']:
+                    print(f"   {key}: {value}")
+
+
+# =============================================================================
+# REQUEST HANDLER TEST FUNCTION
+# =============================================================================
+
+def test_handle_request():
+    """Test the handle_request function with various input types."""
+    print("🧪 Testing handle_request function...")
+    print("=" * 50)
+
+    # Test cases
+    test_cases = [
+        # Integer requests
+        1000,
+        2000,
+        99999,  # Non-existent code
+
+        # String requests
+        "help",
+        "stats",
+        "search auth",
+        "suggest new AI agent system",
+        "1000",  # Numeric string
+        "user",  # Name search
+
+        # Structured requests
+        {"operation": "translate", "code": 1000},
+        {"operation": "search", "term": "system"},
+        {"operation": "suggest", "concept": "blockchain integration", "size": 15},
+        {"operation": "validate", "code": 50000, "name": "test_code", "system": "future_expansion"},
+        {"operation": "system_info", "system": "auth_system"},
+        {"operation": "range_check", "code": 1500, "system": "auth_system"},
+
+        # Batch request
+        [1000, "search user", {"operation": "stats"}],
+
+        # Error cases
+        None,
+        {"operation": "unknown"},
+        {"operation": "translate"},  # Missing code
+    ]
+
+    for i, test_case in enumerate(test_cases, 1):
+        print(f"\n{i:2d}. Testing: {test_case}")
+        try:
+            response = handle_request(test_case)
+            status = response.get("status", "unknown")
+            if status == "success":
+                print(f"    ✅ {status} - {response.get('request_type', 'N/A')}")
+            else:
+                print(f"    ❌ {status} - {response.get('error', 'N/A')}")
+        except Exception as e:
+            print(f"    💥 Exception: {e}")
+
+    print("\n✅ handle_request testing complete!")
+
+
+if __name__ == "__main__":
+    # If running this file directly, run tests and start interactive session
+ # Existing test
+    print("\n" + "=" * 60 + "\n")
+    test_handle_request()  # New handle_request test
+
+    # Optionally start interactive session
+    print("\nWould you like to start an interactive session? (y/n): ", end="")
+    if input().lower().startswith('y'):
+        interactive_session()
 # =============================================================================
 # TESTING AND VERIFICATION
 # =============================================================================

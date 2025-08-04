@@ -3,6 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="uv (lawscraper)" />
   </component>
-  <component name="KubernetesApiProvider"><![CDATA[{}]]></component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 virtualenv at ~/Universal-Integer-System/.venv" project-jdk-type="Python SDK" />
 </project>
