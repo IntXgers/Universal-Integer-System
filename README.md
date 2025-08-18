@@ -247,6 +247,20 @@ await uis.start()
 
 We love contributions! The system is designed to grow with community input.
 
+## Adding New App Types
+
+1. **Core Apps (16000-16499)**: Core team only
+2. **Community Apps (16500-17999)**: 
+   - Submit PR with justification
+   - Must not duplicate existing functionality
+   - Include documentation
+3. **Regional Apps (18000-18999)**:
+   - Must serve specific cultural/regional need
+   - Include locale information
+4. **Experimental (19000-19999)**:
+   - Clearly mark as experimental
+   - Include sunset date
+
 ```bash
 # Clone the repo
 git clone https://github.com/yourusername/universal-integer-system

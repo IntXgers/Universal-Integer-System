@@ -2927,6 +2927,135 @@ class BehavioralPrediction (IntEnum):
 
     # Reserved: 15600-15999
 
+class AppType(IntEnum):
+    """Application types for coaching domains - Range: 16000-16999"""
+
+    # Core Coaching Apps (16000-16049)
+    LIFE_COACH = 16000
+    THERAPIST = 16001
+    FITNESS = 16002
+    COUPLES = 16003
+    COMPANION = 16004
+    CAREER_STRATEGIST = 16005
+    EXECUTIVE_COACH = 16006
+    FINANCIAL_WELLNESS = 16007
+    SPIRITUAL_GUIDE = 16008
+    ACCOUNTABILITY_PARTNER = 16009
+    CREATIVITY_COACH = 16010
+    PARENT_COACH = 16011
+    TRANSITION_GUIDE = 16012
+    PERFORMANCE_COACH = 16013
+    HABITS_TRACKER = 16014
+
+    # Health & Wellness Apps (16015-16029)
+    NUTRITION_COACH = 16015
+    SLEEP_COACH = 16016
+    STRESS_MANAGEMENT = 16017
+    ADDICTION_RECOVERY = 16018
+    CHRONIC_ILLNESS = 16019
+    MENTAL_HEALTH = 16020
+
+    # Learning & Development Apps (16021-16029)
+    STUDY_COACH = 16021
+    LANGUAGE_COACH = 16022
+    SKILL_DEVELOPMENT = 16023
+    READING_COACH = 16024
+    MEMORY_COACH = 16025
+
+    # Relationship Apps (16030-16039)
+    DATING_COACH = 16030
+    FAMILY_COACH = 16031
+    SOCIAL_SKILLS = 16032
+    DIVORCE_COACH = 16033
+    CONFLICT_RESOLUTION = 16034
+
+    # Life Transition Apps (16040-16049)
+    PREPPER_COACH = 16040
+    RETIREMENT_COACH = 16041
+    STUDENT_COACH = 16042
+    AGING_COACH = 16043
+    GRIEF_COUNSELOR = 16044
+    TRAUMA_RECOVERY = 16045
+    CRISIS_SUPPORT = 16046
+
+    # Professional Development Apps (16050-16059)
+    ENTREPRENEUR_COACH = 16050
+    REMOTE_WORK_COACH = 16051
+    COMMUNICATION_COACH = 16052
+    DECISION_COACH = 16053
+    PROCRASTINATION_COACH = 16054
+    CONFIDENCE_COACH = 16055
+
+    # Lifestyle Apps (16060-16069)
+    TRAVEL_COACH = 16060
+    HOBBY_COACH = 16061
+    MINIMALISM_COACH = 16062
+    SUSTAINABILITY_COACH = 16063
+    DIGITAL_WELLNESS = 16064
+
+    # Custom/Special Apps (16070-16079)
+    CUSTOM_COACH = 16070
+
+    # Reserved for future coach types: 16080-16199
+
+    # System Apps (16200-16299)
+    ADMIN_DASHBOARD = 16200
+    ANALYTICS_HUB = 16201
+    COACH_TRAINING = 16202
+    USER_ONBOARDING = 16203
+
+    # Integration Apps (16300-16399)
+    API_GATEWAY = 16300
+    WEBHOOK_MANAGER = 16301
+    DATA_SYNC = 16302
+
+    # Integration Apps (16200-16299)
+    ZAPIER_CONNECTOR = 16200
+    SLACK_INTEGRATION = 16201
+    TEAMS_INTEGRATION = 16202
+    DISCORD_BOT = 16203
+
+    # Reserved for core integrations: 16300-16499
+
+    # ========== COMMUNITY CONTRIBUTIONS (16500-17999) ==========
+    # Open for community-submitted coach types and apps
+
+    # Community Coach Types (16500-16999)
+    # Format: CONTRIBUTOR_APPNAME = 165XX
+    # Example: COMMUNITY_MINDFULNESS_COACH = 16500
+
+    # Community Integration Apps (17000-17499)
+    # Format: CONTRIBUTOR_INTEGRATION = 170XX
+
+    # Community Utility Apps (17500-17999)
+    # Format: CONTRIBUTOR_UTILITY = 175XX
+
+    # ========== REGIONAL/CULTURAL VARIANTS (18000-18999) ==========
+    # For localized or culturally-specific coaching apps
+
+    # Asian Market Apps (18000-18199)
+    # Example: FENG_SHUI_COACH = 18000
+
+    # European Market Apps (18200-18399)
+    # Example: WORK_LIFE_BALANCE_COACH_EU = 18200
+
+    # Americas Market Apps (18400-18599)
+    # Example: COLLEGE_PREP_COACH_US = 18400
+
+    # Other Regional Apps (18600-18999)
+
+    # ========== EXPERIMENTAL/BETA APPS (19000-19999) ==========
+    # For experimental features and beta testing
+
+    # AI Research Apps (19000-19199)
+    # Example: QUANTUM_COACHING_EXPERIMENT = 19000
+
+    # Beta Features (19200-19499)
+    # Example: BETA_VR_COACH = 19200
+
+    # Test Apps (19500-19999)
+    # Example: TEST_LOAD_SIMULATOR = 19500
+
 
 # =============================================================================
 # TRANSLATION SYSTEM
