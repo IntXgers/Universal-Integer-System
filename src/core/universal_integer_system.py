@@ -1867,62 +1867,6 @@ class NeuralNetworkEvent (IntEnum):
 
     # Reserved: 5880-5899
 
-
-class BehavioralMetric(IntEnum):
-    """Metrics for measuring behavioral patterns - Range: 5900-5999"""
-
-    # Tracking Metrics (5900-5919)
-    FREQUENCY_MEASURE = 5900
-    INTENSITY_LEVEL = 5901
-    DURATION_TRACKED = 5902
-    CONSISTENCY_SCORE = 5903
-    TREND_DIRECTION = 5904
-    VARIABILITY_INDEX = 5905
-    BASELINE_ESTABLISHED = 5906
-    DEVIATION_DETECTED = 5907
-    PATTERN_STRENGTH = 5908
-    HABIT_SCORE = 5909
-
-    # Progress Indicators (5920-5939)
-    IMPROVEMENT_RATE = 5920
-    GOAL_PROXIMITY = 5921
-    MILESTONE_REACHED = 5922
-    SETBACK_RECORDED = 5923
-    RECOVERY_TIME = 5924
-    MOMENTUM_SCORE = 5925
-    BREAKTHROUGH_MOMENT = 5926
-    PLATEAU_DETECTED = 5927
-
-    # Behavioral States (5940-5959)
-    BEHAVIOR_INITIATED = 5940
-    BEHAVIOR_MAINTAINED = 5941
-    BEHAVIOR_STRENGTHENED = 5942
-    BEHAVIOR_WEAKENED = 5943
-    BEHAVIOR_EXTINCT = 5944
-    BEHAVIOR_RELAPSED = 5945
-    BEHAVIOR_TRANSFORMED = 5946
-    BEHAVIOR_INTEGRATED = 5947
-
-    # Intervention Results (5960-5979)
-    INTERVENTION_APPLIED = 5960
-    INTERVENTION_EFFECTIVE = 5961
-    INTERVENTION_INEFFECTIVE = 5962
-    STRATEGY_ADJUSTED = 5963
-    SUPPORT_ACTIVATED = 5964
-    RESISTANCE_ENCOUNTERED = 5965
-    BREAKTHROUGH_ACHIEVED = 5966
-
-    # Analysis Outputs (5980-5999)
-    PATTERN_IDENTIFIED = 5980
-    CORRELATION_FOUND = 5981
-    PREDICTION_GENERATED = 5982
-    INSIGHT_DISCOVERED = 5983
-    RECOMMENDATION_CREATED = 5984
-    RISK_ASSESSED = 5985
-    OPPORTUNITY_IDENTIFIED = 5986
-    # Reserved: 5987-5999
-
-
 # =============================================================================
 # SECTION 6: BUSINESS LOGIC & WORKFLOWS (6000-6999)
 # =============================================================================
@@ -2926,7 +2870,7 @@ class BehavioralPrediction (IntEnum):
     # ... More learning outcomes
 
 
-class BehavioralMetricType(IntEnum):
+class BehavioralMetric(IntEnum):
     """Types of behavioral metrics - Range: 15800-15899"""
 
     # Tracking Metrics (15800-15809)
